@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P2P Minecraft Bedrock World Finder (Auto Mesh)</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+    body { 
+      font-family: 'Fredoka One', cursive; 
+      background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 100%); 
+      color: #2C5F2D; 
+      max-width: 800px; 
+      margin: 0 auto; 
+      padding: 20px; 
+    }
+    h1, h2 { 
+      color: #8B4513; 
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3); 
+      font-size: 2em;
+      border-bottom: 3px solid #D2691E;
+      padding-bottom: 5px;
+    }
+    form { margin-bottom: 20px; }
+    input, select { 
+      margin: 5px; 
+      padding: 10px; 
+      background-color: #F5DEB3; 
+      color: #2C5F2D; 
+      border: 2px solid #8B4513; 
+      font-family: 'Fredoka One', cursive; 
+      font-size: 16px; 
+      border-radius: 5px;
+      box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    button { 
+      margin: 5px; 
+      padding: 10px; 
+      background-color: #228B22; 
+      color: #FFF; 
+      border: 2px solid #006400; 
+      font-family: 'Fredoka One', cursive; 
+      font-size: 16px; 
+      cursor: pointer; 
+      border-radius: 5px;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    button:hover { 
+      background-color: #32CD32; 
+      border-color: #228B22;
+      transform: translateY(-1px);
+    }
+    #profiles { list-style: none; padding: 0; }
+    #profiles li { 
+      border: 3px solid #8B4513; 
+      margin: 10px 0; 
+      padding: 15px; 
+      background-color: #F0E68C; 
+      box-shadow: 4px 4px 8px rgba(0,0,0,0.2); 
+      border-radius: 8px;
+    }
+    #profiles li.group h3 { 
+      margin: 0 0 10px 0; 
+      color: #8B4513; 
+      font-size: 1.5em;
+      text-shadow: none; 
+    }
+    .profile { 
+      margin: 10px 0; 
+      padding: 12px; 
+      border-left: 5px solid #228B22; 
+      background-color: #FFF8DC; 
+      border-radius: 5px;
+      box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    .section { 
+      border: 3px solid #D2691E; 
+      padding: 20px; 
+      margin: 10px 0; 
+      box-shadow: 4px 4px 8px rgba(0,0,0,0.2); 
+      background-color: #F5F5DC;
+      border-radius: 8px;
+    }
+    #status { 
+      color: #228B22; 
+      font-weight: bold; 
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3); 
+      font-size: 1.1em;
+    }
+    #error { 
+      color: #DC143C; 
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3); 
+    }
+    label { 
+      color: #2C5F2D; 
+      text-shadow: none; 
+      font-weight: bold;
+    }
+    small { 
+      font-size: 12px; 
+      text-shadow: none; 
+      color: #696969;
+    }
+  </style>
+</head>
+<body>
+  <h1>P2P Minecraft Bedrock World Finder (Auto Mesh)</h1>
+
+  <div class="section">
+    <h2>Network Status</h2>
+    <div id="status">Not connected</div>
+    <div id="error"></div>
+    <button id="connectBtn">Connect</button>
+  </div>
+
+  <div class="section">
+    <h2>Search Worlds</h2>
+    <form id="searchForm">
+      <select id="searchMode">
+        <option value="">Any Mode</option>
+        <option value="creative">Creative</option>
+        <option value="survival">Survival</option>
+        <option value="adventure">Adventure</option>
+        <option value="other">Other</option>
+      </select>
+      <input type="number" id="minHours" placeholder="Min Hours Played" min="0">
+      <input type="text" id="searchAddress" placeholder="Server/Realm Info (partial match)">
+      <select id="searchPVP"><option value="">Any PVP</option><option value="yes">PVP Only</option><option value="no">No PVP Only</option></select>
+      <select id="searchRoleplay"><option value="">Any Roleplay</option><option value="yes">Roleplay Only</option><option value="no">No Roleplay Only</option></select>
+      <select id="searchFamilyFriendly"><option value="">Any Family Friendly</option><option value="yes">Family Friendly Only</option></select>
+      <button type="submit">Search</button>
+    </form>
+    <details open>
+      <summary>Search Results (click to expand/collapse)</summary>
+      <ul id="profiles"></ul>
+    </details>
+  </div>
+
+  <div class="section">
+    <h2>Create Your Profile</h2>
+    <form id="profileForm">
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="text" id="joinInfo" placeholder="Server Address (IP:Port) or Realm Code (optional)">
+      <select id="mode">
+        <option value="">Select Mode</option>
+        <option value="creative">Creative</option>
+        <option value="survival">Survival</option>
+        <option value="adventure">Adventure</option>
+        <option value="other">Other</option>
+      </select>
+      <input type="number" id="hoursPlayed" placeholder="Hours Played" min="0">
+      <select id="pvp"><option value="no">PVP: No</option><option value="yes">PVP: Yes</option></select>
+      <select id="roleplay"><option value="no">Roleplay: No</option><option value="yes">Roleplay: Yes</option></select>
+      <select id="familyFriendly"><option value="no">Family Friendly: No</option><option value="yes">Family Friendly: Yes</option></select>
+      <button type="submit">Save & Share Profile</button>
+    </form>
+  </div>
+
+  <script type="module">
+    import webconnect from 'https://cdn.jsdelivr.net/npm/webconnect@0.0.10/dist/esm/webconnect.js';
+
+    const connectBtn = document.getElementById("connectBtn");
+    const statusDiv = document.getElementById("status");
+    const errorDiv = document.getElementById("error");
+    const profileForm = document.getElementById("profileForm");
+    const searchForm = document.getElementById("searchForm");
+    const profilesList = document.getElementById("profiles");
+
+    let connect;
+    let allProfiles = [];
+
+    function displayProfiles(profiles) {
+      profilesList.innerHTML = "";
+      if (profiles.length === 0) {
+        profilesList.innerHTML = "<li>No profiles found.</li>";
+        return;
+      }
+
+      const grouped = {};
+      profiles.forEach(profile => {
+        if (!grouped[profile.mode]) grouped[profile.mode] = [];
+        grouped[profile.mode].push(profile);
+      });
+
+      for (const mode in grouped) {
+        const li = document.createElement("li");
+        li.classList.add("group");
+        li.innerHTML = `<h3>${mode.toUpperCase()}</h3>`;
+        grouped[mode].forEach(p => {
+          const div = document.createElement("div");
+          div.classList.add("profile");
+          div.innerHTML = `
+            <strong>${p.username}</strong> 
+            - ${p.hoursPlayed} hrs 
+            ${p.joinInfo ? "- Join: " + p.joinInfo : ""}<br>
+            PVP: ${p.pvp}, Roleplay: ${p.roleplay}, Family: ${p.familyFriendly}
+          `;
+          li.appendChild(div);
+        });
+        profilesList.appendChild(li);
+      }
+    }
+
+    function updatePeerCount() {
+      if (!connect) return;
+      connect.getConnection((attr) => {
+        const count = attr.connection.length + 1;
+        statusDiv.innerText = `Connected to mesh network! ${count} peers`;
+      });
+    }
+
+    connectBtn.onclick = () => {
+      const channelName = "mc-worldfinder";
+      try {
+        connect = webconnect({ channelName: channelName });
+        statusDiv.innerText = "Connecting...";
+        errorDiv.innerText = "";
+
+        connect.onConnect((attribute) => {
+          console.log("New peer connected:", attribute.connectId);
+          updatePeerCount();
+        });
+
+        connect.onReceive((data, attribute) => {
+          if (data.type === "profile") {
+            allProfiles.push(data.profile);
+            displayProfiles(allProfiles);
+          }
+        });
+
+        // Confirm connection and get initial peer count
+        connect.getMyId((myAttr) => {
+          updatePeerCount();
+        });
+      } catch (err) {
+        errorDiv.innerText = "Failed to connect: " + err.message;
+      }
+    };
+
+    profileForm.onsubmit = (e) => {
+      e.preventDefault();
+      const profile = {
+        username: document.getElementById("username").value,
+        joinInfo: document.getElementById("joinInfo").value,
+        mode: document.getElementById("mode").value,
+        hoursPlayed: parseInt(document.getElementById("hoursPlayed").value) || 0,
+        pvp: document.getElementById("pvp").value,
+        roleplay: document.getElementById("roleplay").value,
+        familyFriendly: document.getElementById("familyFriendly").value,
+      };
+      allProfiles.push(profile);
+      displayProfiles(allProfiles);
+      if (connect) connect.Send({ type: "profile", profile }, {connectId: null});
+    };
+
+    searchForm.onsubmit = (e) => {
+      e.preventDefault();
+      const mode = document.getElementById("searchMode").value;
+      const minHours = parseInt(document.getElementById("minHours").value) || 0;
+      const addr = document.getElementById("searchAddress").value.toLowerCase();
+      const pvp = document.getElementById("searchPVP").value;
+      const roleplay = document.getElementById("searchRoleplay").value;
+      const family = document.getElementById("searchFamilyFriendly").value;
+
+      const filtered = allProfiles.filter(p => {
+        return (!mode || p.mode === mode) &&
+               (!minHours || p.hoursPlayed >= minHours) &&
+               (!addr || (p.joinInfo && p.joinInfo.toLowerCase().includes(addr))) &&
+               (!pvp || p.pvp === pvp) &&
+               (!roleplay || p.roleplay === roleplay) &&
+               (!family || p.familyFriendly === family);
+      });
+      displayProfiles(filtered);
+    };
+  </script>
+</body>
+</html>
