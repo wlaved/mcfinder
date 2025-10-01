@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,6 +50,10 @@
       border-color: #228B22;
       transform: translateY(-1px);
     }
+    button:disabled {
+      background-color: #808080;
+      cursor: not-allowed;
+    }
     #profiles { list-style: none; padding: 0; }
     #profiles li { 
       border: 3px solid #8B4513; 
@@ -82,6 +85,9 @@
       background-color: #F5F5DC;
       border-radius: 8px;
     }
+    #status, #error, #profileStatus { 
+      animation: fadeInOut 1s ease-in-out;
+    }
     #status { 
       color: #228B22; 
       font-weight: bold; 
@@ -91,6 +97,13 @@
     #error { 
       color: #DC143C; 
       text-shadow: 1px 1px 2px rgba(0,0,0,0.3); 
+    }
+    #profileStatus { 
+      color: #FF8C00; 
+      font-weight: bold; 
+      margin-top: 10px; 
+      text-align: center;
+      font-size: 1.1em;
     }
     label { 
       color: #2C5F2D; 
@@ -102,6 +115,22 @@
       text-shadow: none; 
       color: #696969;
     }
+    .delete-btn {
+      background-color: #DC143C;
+      border-color: #B22222;
+      margin-left: 10px;
+      padding: 5px 10px;
+      font-size: 14px;
+    }
+    .delete-btn:hover {
+      background-color: #FF0000;
+      border-color: #DC143C;
+    }
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(10px); }
+      50% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -111,25 +140,53 @@
     <h2>Network Status</h2>
     <div id="status">Not connected</div>
     <div id="error"></div>
-    <button id="connectBtn">Connect</button>
+    <button id="connectBtn" aria-label="Connect to the peer-to-peer network">Connect</button>
   </div>
 
   <div class="section">
     <h2>Search Worlds</h2>
     <form id="searchForm">
-      <select id="searchMode">
+      <select id="searchGame" aria-label="Select game">
+        <option value="minecraft_bedrock">Minecraft Bedrock</option>
+      </select>
+      <select id="searchMode" aria-label="Select game mode">
         <option value="">Any Mode</option>
         <option value="creative">Creative</option>
         <option value="survival">Survival</option>
         <option value="adventure">Adventure</option>
         <option value="other">Other</option>
       </select>
-      <input type="number" id="minHours" placeholder="Min Hours Played" min="0">
-      <input type="text" id="searchAddress" placeholder="Server/Realm Info (partial match)">
-      <select id="searchPVP"><option value="">Any PVP</option><option value="yes">PVP Only</option><option value="no">No PVP Only</option></select>
-      <select id="searchRoleplay"><option value="">Any Roleplay</option><option value="yes">Roleplay Only</option><option value="no">No Roleplay Only</option></select>
-      <select id="searchFamilyFriendly"><option value="">Any Family Friendly</option><option value="yes">Family Friendly Only</option></select>
-      <button type="submit">Search</button>
+      <input type="number" id="minHours" placeholder="Min Hours Played" min="0" aria-label="Minimum hours played">
+      <input type="text" id="searchAddress" placeholder="Server/Realm Info (partial match)" aria-label="Search server address or Realm code">
+      <select id="searchPVP" aria-label="Select PVP preference">
+        <option value="">Any PVP</option>
+        <option value="yes">PVP Only</option>
+        <option value="no">No PVP Only</option>
+      </select>
+      <select id="searchRoleplay" aria-label="Select roleplay preference">
+        <option value="">Any Roleplay</option>
+        <option value="yes">Roleplay Only</option>
+        <option value="no">No Roleplay Only</option>
+      </select>
+      <select id="searchFamilyFriendly" aria-label="Select family-friendly preference">
+        <option value="">Any Family Friendly</option>
+        <option value="yes">Family Friendly Only</option>
+      </select>
+      <select id="searchWorldTheme" aria-label="Select world theme">
+        <option value="">Any Theme</option>
+        <option value="medieval">Medieval</option>
+        <option value="scifi">Sci-Fi</option>
+        <option value="fantasy">Fantasy</option>
+        <option value="modern">Modern</option>
+      </select>
+      <select id="searchPlaystyle" aria-label="Select playstyle">
+        <option value="">Any Playstyle</option>
+        <option value="builder">Builder</option>
+        <option value="explorer">Explorer</option>
+        <option value="redstone">Redstone Engineer</option>
+        <option value="pvp">PvP Warrior</option>
+      </select>
+      <button type="submit" aria-label="Search for worlds">Search</button>
     </form>
     <details open>
       <summary>Search Results (click to expand/collapse)</summary>
@@ -140,21 +197,49 @@
   <div class="section">
     <h2>Create Your Profile</h2>
     <form id="profileForm">
-      <input type="text" id="username" placeholder="Username" required>
-      <input type="text" id="joinInfo" placeholder="Server Address (IP:Port) or Realm Code (optional)">
-      <select id="mode">
+      <select id="game" required aria-label="Select game">
+        <option value="minecraft_bedrock">Minecraft Bedrock</option>
+      </select>
+      <input type="text" id="username" placeholder="Username" required aria-label="Enter your username">
+      <input type="text" id="joinInfo" placeholder="Server Address, Realm Code, or URL (optional)" aria-label="Enter server address, Realm code, or URL">
+      <select id="mode" aria-label="Select game mode">
         <option value="">Select Mode</option>
         <option value="creative">Creative</option>
         <option value="survival">Survival</option>
         <option value="adventure">Adventure</option>
         <option value="other">Other</option>
       </select>
-      <input type="number" id="hoursPlayed" placeholder="Hours Played" min="0">
-      <select id="pvp"><option value="no">PVP: No</option><option value="yes">PVP: Yes</option></select>
-      <select id="roleplay"><option value="no">Roleplay: No</option><option value="yes">Roleplay: Yes</option></select>
-      <select id="familyFriendly"><option value="no">Family Friendly: No</option><option value="yes">Family Friendly: Yes</option></select>
-      <button type="submit">Save & Share Profile</button>
+      <input type="number" id="hoursPlayed" placeholder="Hours Played" min="0" aria-label="Hours played">
+      <select id="pvp" aria-label="Select PVP preference">
+        <option value="no">PVP: No</option>
+        <option value="yes">PVP: Yes</option>
+      </select>
+      <select id="roleplay" aria-label="Select roleplay preference">
+        <option value="no">Roleplay: No</option>
+        <option value="yes">Roleplay: Yes</option>
+      </select>
+      <select id="familyFriendly" aria-label="Select family-friendly preference">
+        <option value="no">Family Friendly: No</option>
+        <option value="yes">Family Friendly: Yes</option>
+      </select>
+      <select id="worldTheme" aria-label="Select world theme">
+        <option value="">Select World Theme</option>
+        <option value="medieval">Medieval</option>
+        <option value="scifi">Sci-Fi</option>
+        <option value="fantasy">Fantasy</option>
+        <option value="modern">Modern</option>
+      </select>
+      <select id="playstyle" aria-label="Select playstyle">
+        <option value="">Select Playstyle</option>
+        <option value="builder">Builder</option>
+        <option value="explorer">Explorer</option>
+        <option value="redstone">Redstone Engineer</option>
+        <option value="pvp">PvP Warrior</option>
+      </select>
+      <input type="text" id="goals" placeholder="Your World Goals (e.g., Build a mega-city)" aria-label="Enter your world goals">
+      <button type="submit" aria-label="Save or update your profile">Save & Share Profile</button>
     </form>
+    <div id="profileStatus"></div>
   </div>
 
   <script type="module">
@@ -166,21 +251,31 @@
     const profileForm = document.getElementById("profileForm");
     const searchForm = document.getElementById("searchForm");
     const profilesList = document.getElementById("profiles");
+    const profileStatus = document.getElementById("profileStatus");
 
     let connect;
     let allProfiles = [];
+    let ownUsername = localStorage.getItem('ownUsername') || null;
+    let ownProfile = ownUsername ? JSON.parse(localStorage.getItem('ownProfile') || 'null') : null;
+    let lastChange = ownUsername ? parseInt(localStorage.getItem('lastChange') || '0') : 0;
+    let lastDeletes = JSON.parse(localStorage.getItem('lastDeletes') || '{}');
+    let lastOwnDelete = parseInt(localStorage.getItem('lastOwnDelete') || '0');
+    let otherPeers = 0;
+
+    const badWords = ['fuck', 'shit', 'bitch', 'asshole', 'cunt', 'nigger', 'faggot', 'retard'];
 
     function displayProfiles(profiles) {
       profilesList.innerHTML = "";
+      console.log(`Displaying ${profiles.length} profiles`);
       if (profiles.length === 0) {
         profilesList.innerHTML = "<li>No profiles found.</li>";
         return;
       }
 
       const grouped = {};
-      profiles.forEach(profile => {
-        if (!grouped[profile.mode]) grouped[profile.mode] = [];
-        grouped[profile.mode].push(profile);
+      profiles.forEach(p => {
+        if (!grouped[p.mode]) grouped[p.mode] = [];
+        grouped[p.mode].push(p);
       });
 
       for (const mode in grouped) {
@@ -193,13 +288,130 @@
           div.innerHTML = `
             <strong>${p.username}</strong> 
             - ${p.hoursPlayed} hrs 
-            ${p.joinInfo ? "- Join: " + p.joinInfo : ""}<br>
+            ${p.joinInfo ? "- Join: " + p.joinInfo : ""} 
+            - Match Score: ${p.score || 0}%<br>
             PVP: ${p.pvp}, Roleplay: ${p.roleplay}, Family: ${p.familyFriendly}
+            ${p.worldTheme ? ", Theme: " + p.worldTheme : ""}
+            ${p.playstyle ? ", Playstyle: " + p.playstyle : ""}
+            ${p.goals ? ", Goals: " + p.goals : ""}
           `;
+          const deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "Delete";
+          deleteBtn.classList.add("delete-btn");
+          deleteBtn.setAttribute("aria-label", `Delete profile for ${p.username}`);
+          deleteBtn.onclick = () => deleteProfileByUser(p.username);
+          div.appendChild(deleteBtn);
           li.appendChild(div);
         });
         profilesList.appendChild(li);
       }
+    }
+
+    function updateProfile(profile) {
+      if (!profile.timestamp || !profile.username) {
+        console.log("Invalid profile received, skipping:", profile);
+        return;
+      }
+      console.log("Updating profile:", profile.username);
+      const existingIdx = allProfiles.findIndex(p => p.username === profile.username);
+      if (existingIdx === -1) {
+        allProfiles.push(profile);
+      } else if (profile.timestamp > allProfiles[existingIdx].timestamp) {
+        allProfiles[existingIdx] = profile;
+      } else {
+        console.log(`Older profile for ${profile.username} ignored`);
+        return;
+      }
+      console.log(`Total profiles: ${allProfiles.length}`);
+      displayProfiles(allProfiles);
+    }
+
+    function deleteProfile(username) {
+      console.log(`Deleting profile: ${username}`);
+      const idx = allProfiles.findIndex(p => p.username === username);
+      if (idx > -1) {
+        allProfiles.splice(idx, 1);
+        displayProfiles(allProfiles);
+      }
+      if (username === ownUsername) {
+        const now = Date.now();
+        lastOwnDelete = now;
+        localStorage.setItem('lastOwnDelete', now.toString());
+        localStorage.removeItem('ownProfile');
+        localStorage.removeItem('lastChange');
+        localStorage.removeItem('ownUsername');
+        ownUsername = null;
+        ownProfile = null;
+        lastChange = 0;
+        profileForm.reset();
+        const submitBtn = profileForm.querySelector('button[type="submit"]');
+        submitBtn.textContent = 'Save & Share Profile';
+        submitBtn.disabled = true;
+        profileStatus.innerText = 'Profile deleted. Next creation in 24 hours.';
+      }
+    }
+
+    function resetTimers() {
+      console.log("All peers disconnected, resetting timers and profile state");
+      lastChange = 0;
+      lastDeletes = {};
+      lastOwnDelete = 0;
+      ownUsername = null;
+      ownProfile = null;
+      localStorage.removeItem('lastChange');
+      localStorage.removeItem('lastDeletes');
+      localStorage.removeItem('lastOwnDelete');
+      localStorage.removeItem('ownUsername');
+      localStorage.removeItem('ownProfile');
+      const submitBtn = profileForm.querySelector('button[type="submit"]');
+      submitBtn.textContent = 'Save & Share Profile';
+      submitBtn.disabled = false;
+      profileForm.reset();
+      profileStatus.innerText = 'Network disconnected. Create a new profile to share.';
+    }
+
+    function resetOwnState() {
+      const now = Date.now();
+      if (now - lastChange >= 86400000 && now - lastOwnDelete >= 86400000) {
+        console.log("User disconnected, resetting profile state (cooldowns expired)");
+        ownUsername = null;
+        ownProfile = null;
+        lastChange = 0;
+        lastOwnDelete = 0;
+        localStorage.removeItem('ownUsername');
+        localStorage.removeItem('ownProfile');
+        localStorage.removeItem('lastChange');
+        localStorage.removeItem('lastOwnDelete');
+        const submitBtn = profileForm.querySelector('button[type="submit"]');
+        submitBtn.textContent = 'Save & Share Profile';
+        submitBtn.disabled = false;
+        profileForm.reset();
+        profileStatus.innerText = 'Disconnected. Create a new profile to share.';
+      } else {
+        console.log("User disconnected, keeping profile state (cooldowns active)");
+      }
+    }
+
+    function deleteProfileByUser(targetUsername) {
+      if (!ownUsername) {
+        alert('Please create a profile first to perform deletions.');
+        return;
+      }
+      const deleter = ownUsername;
+      const now = Date.now();
+      const lastDel = lastDeletes[deleter] ? parseInt(lastDeletes[deleter]) : 0;
+      if (now - lastDel < 86400000) {
+        const hours = Math.ceil((86400000 - (now - lastDel)) / 3600000);
+        alert(`You can only delete one profile every 24 hours. Next deletion in ${hours} hours.`);
+        return;
+      }
+      if (!confirm(`Delete profile for ${targetUsername}?`)) return;
+      lastDeletes[deleter] = now.toString();
+      localStorage.setItem('lastDeletes', JSON.stringify(lastDeletes));
+      if (connect) {
+        connect.Send({ type: "delete", target: targetUsername, deleter: deleter }, { connectId: null });
+      }
+      deleteProfile(targetUsername);
     }
 
     function updatePeerCount() {
@@ -210,67 +422,198 @@
       });
     }
 
+    // Initialize profile form
+    const submitBtn = profileForm.querySelector('button[type="submit"]');
+    if (ownProfile) {
+      document.getElementById("game").value = ownProfile.game || 'minecraft_bedrock';
+      document.getElementById("username").value = ownProfile.username || '';
+      document.getElementById("joinInfo").value = ownProfile.joinInfo || '';
+      document.getElementById("mode").value = ownProfile.mode || '';
+      document.getElementById("hoursPlayed").value = ownProfile.hoursPlayed || 0;
+      document.getElementById("pvp").value = ownProfile.pvp || 'no';
+      document.getElementById("roleplay").value = ownProfile.roleplay || 'no';
+      document.getElementById("familyFriendly").value = ownProfile.familyFriendly || 'no';
+      document.getElementById("worldTheme").value = ownProfile.worldTheme || '';
+      document.getElementById("playstyle").value = ownProfile.playstyle || '';
+      document.getElementById("goals").value = ownProfile.goals || '';
+      submitBtn.textContent = 'Update & Share Profile';
+      const timeSinceChange = Date.now() - lastChange;
+      if (timeSinceChange < 86400000) {
+        const hoursLeft = Math.ceil((86400000 - timeSinceChange) / 3600000);
+        profileStatus.innerText = `Next update in ${hoursLeft} hours.`;
+        submitBtn.disabled = true;
+      } else {
+        profileStatus.innerText = 'Ready to update profile.';
+      }
+    } else {
+      const now = Date.now();
+      const timeSinceChange = now - lastChange;
+      const timeSinceDelete = now - lastOwnDelete;
+      if (timeSinceChange < 86400000 || timeSinceDelete < 86400000) {
+        const hoursLeft = Math.ceil((86400000 - Math.min(timeSinceChange, timeSinceDelete)) / 3600000);
+        profileStatus.innerText = `Next profile creation in ${hoursLeft} hours.`;
+        submitBtn.disabled = true;
+      } else {
+        profileStatus.innerText = 'Create your profile to share.';
+      }
+    }
+
     connectBtn.onclick = () => {
       const channelName = "mc-worldfinder";
       try {
         connect = webconnect({ channelName: channelName });
+        otherPeers = 0;
         statusDiv.innerText = "Connecting...";
         errorDiv.innerText = "";
 
         connect.onConnect((attribute) => {
           console.log("New peer connected:", attribute.connectId);
+          otherPeers++;
           updatePeerCount();
-        });
-
-        connect.onReceive((data, attribute) => {
-          if (data.type === "profile") {
-            allProfiles.push(data.profile);
-            displayProfiles(allProfiles);
+          if (ownProfile) {
+            connect.Send({ type: "profile", profile: ownProfile }, { connectId: attribute.connectId });
           }
         });
 
-        // Confirm connection and get initial peer count
-        connect.getMyId((myAttr) => {
+        connect.onDisconnect((attribute) => {
+          console.log("Peer disconnected:", attribute.connectId);
+          otherPeers--;
           updatePeerCount();
+          if (otherPeers <= 0) {
+            resetTimers();
+          }
+        });
+
+        connect.onReceive((data, attribute) => {
+          const now = Date.now();
+          if (data.type === "profile") {
+            console.log("Received profile from peer:", data.profile);
+            updateProfile(data.profile);
+          } else if (data.type === "delete") {
+            const deleterTime = lastDeletes[data.deleter];
+            if (deleterTime && now - parseInt(deleterTime) < 86400000) {
+              console.log(`Recent delete from ${data.deleter} ignored.`);
+              return;
+            }
+            lastDeletes[data.deleter] = now.toString();
+            localStorage.setItem('lastDeletes', JSON.stringify(lastDeletes));
+            deleteProfile(data.target);
+          }
+        });
+
+        connect.getConnection((attr) => {
+          otherPeers = attr.connection.length;
+          updatePeerCount();
+          if (ownProfile) {
+            connect.Send({ type: "profile", profile: ownProfile }, { connectId: null });
+          }
         });
       } catch (err) {
         errorDiv.innerText = "Failed to connect: " + err.message;
       }
     };
 
+    window.addEventListener('beforeunload', () => {
+      if (connect) {
+        if (otherPeers <= 0) {
+          resetTimers();
+        } else {
+          resetOwnState();
+        }
+      }
+    });
+
     profileForm.onsubmit = (e) => {
       e.preventDefault();
+      const usernameInput = document.getElementById("username").value.trim();
+      if (!usernameInput) {
+        profileStatus.innerText = 'Username is required.';
+        return;
+      }
+      const joinInfo = document.getElementById("joinInfo").value.trim();
+      if (joinInfo && !/^(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}|[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*|https?:\/\/[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)+.*)$/.test(joinInfo)) {
+        profileStatus.innerText = 'Invalid server address, Realm code, or URL.';
+        return;
+      }
+      const textToCheck = (usernameInput + ' ' + joinInfo).toLowerCase();
+      if (badWords.some(word => textToCheck.includes(word))) {
+        profileStatus.innerText = 'Profanity detected. Please use appropriate language.';
+        return;
+      }
+      const isUpdate = !!ownProfile;
+      if (!isUpdate && allProfiles.some(p => p.username === usernameInput)) {
+        profileStatus.innerText = 'Username already taken. Choose another.';
+        return;
+      }
+      const now = Date.now();
+      if (isUpdate && now - lastChange < 86400000) {
+        const hours = Math.ceil((86400000 - (now - lastChange)) / 3600000);
+        profileStatus.innerText = `Next update in ${hours} hours.`;
+        return;
+      }
+      if (!isUpdate && now - lastOwnDelete < 86400000) {
+        const hours = Math.ceil((86400000 - (now - lastOwnDelete)) / 3600000);
+        profileStatus.innerText = `Next profile creation in ${hours} hours.`;
+        return;
+      }
       const profile = {
-        username: document.getElementById("username").value,
-        joinInfo: document.getElementById("joinInfo").value,
+        game: document.getElementById("game").value,
+        username: usernameInput,
+        joinInfo,
         mode: document.getElementById("mode").value,
         hoursPlayed: parseInt(document.getElementById("hoursPlayed").value) || 0,
         pvp: document.getElementById("pvp").value,
         roleplay: document.getElementById("roleplay").value,
         familyFriendly: document.getElementById("familyFriendly").value,
+        worldTheme: document.getElementById("worldTheme").value,
+        playstyle: document.getElementById("playstyle").value,
+        goals: document.getElementById("goals").value.trim(),
+        timestamp: now
       };
-      allProfiles.push(profile);
-      displayProfiles(allProfiles);
-      if (connect) connect.Send({ type: "profile", profile }, {connectId: null});
+      localStorage.setItem('ownProfile', JSON.stringify(profile));
+      localStorage.setItem('lastChange', now.toString());
+      ownUsername = usernameInput;
+      localStorage.setItem('ownUsername', ownUsername);
+      ownProfile = profile;
+      lastChange = now;
+      updateProfile(profile);
+      if (connect) connect.Send({ type: "profile", profile }, { connectId: null });
+      submitBtn.textContent = 'Update & Share Profile';
+      submitBtn.disabled = true;
+      profileStatus.innerText = 'Profile updated! Next update in 24 hours.';
     };
 
     searchForm.onsubmit = (e) => {
       e.preventDefault();
+      console.log("Search initiated, current profiles:", allProfiles.length);
+      const game = document.getElementById("searchGame").value || "minecraft_bedrock";
       const mode = document.getElementById("searchMode").value;
       const minHours = parseInt(document.getElementById("minHours").value) || 0;
       const addr = document.getElementById("searchAddress").value.toLowerCase();
       const pvp = document.getElementById("searchPVP").value;
       const roleplay = document.getElementById("searchRoleplay").value;
       const family = document.getElementById("searchFamilyFriendly").value;
+      const worldTheme = document.getElementById("searchWorldTheme").value;
+      const playstyle = document.getElementById("searchPlaystyle").value;
 
-      const filtered = allProfiles.filter(p => {
-        return (!mode || p.mode === mode) &&
-               (!minHours || p.hoursPlayed >= minHours) &&
-               (!addr || (p.joinInfo && p.joinInfo.toLowerCase().includes(addr))) &&
-               (!pvp || p.pvp === pvp) &&
-               (!roleplay || p.roleplay === roleplay) &&
-               (!family || p.familyFriendly === family);
-      });
+      const filtered = allProfiles
+        .map(p => {
+          let score = 0;
+          if (p.game === game) score += 20;
+          if (mode && p.mode === mode) score += 20;
+          if (minHours && p.hoursPlayed >= minHours) score += 15;
+          if (addr && p.joinInfo && p.joinInfo.toLowerCase().includes(addr)) score += 15;
+          if (pvp && p.pvp === pvp) score += 10;
+          if (roleplay && p.roleplay === roleplay) score += 10;
+          if (family && p.familyFriendly === family) score += 10;
+          if (worldTheme && p.worldTheme === worldTheme) score += 10;
+          if (playstyle && p.playstyle === playstyle) score += 10;
+          return { profile: p, score };
+        })
+        .filter(p => p.profile.game === game)
+        .sort((a, b) => b.score - a.score)
+        .map(p => ({ ...p.profile, score: p.score }));
+      console.log(`Filtered ${filtered.length} profiles for display`);
       displayProfiles(filtered);
     };
   </script>
