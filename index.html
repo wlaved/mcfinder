@@ -352,7 +352,7 @@
     }
 
     function resetTimers() {
-      console.log("All peers disconnected, resetting timers and profile state");
+      console.log("Disconnected or network shutdown, resetting timers and profile state");
       lastChange = 0;
       lastDeletes = {};
       lastOwnDelete = 0;
@@ -367,29 +367,7 @@
       submitBtn.textContent = 'Save & Share Profile';
       submitBtn.disabled = false;
       profileForm.reset();
-      profileStatus.innerText = 'Network disconnected. Create a new profile to share.';
-    }
-
-    function resetOwnState() {
-      const now = Date.now();
-      if (now - lastChange >= 86400000 && now - lastOwnDelete >= 86400000) {
-        console.log("User disconnected, resetting profile state (cooldowns expired)");
-        ownUsername = null;
-        ownProfile = null;
-        lastChange = 0;
-        lastOwnDelete = 0;
-        localStorage.removeItem('ownUsername');
-        localStorage.removeItem('ownProfile');
-        localStorage.removeItem('lastChange');
-        localStorage.removeItem('lastOwnDelete');
-        const submitBtn = profileForm.querySelector('button[type="submit"]');
-        submitBtn.textContent = 'Save & Share Profile';
-        submitBtn.disabled = false;
-        profileForm.reset();
-        profileStatus.innerText = 'Disconnected. Create a new profile to share.';
-      } else {
-        console.log("User disconnected, keeping profile state (cooldowns active)");
-      }
+      profileStatus.innerText = 'Disconnected. Create a new profile to share.';
     }
 
     function deleteProfileByUser(targetUsername) {
@@ -446,12 +424,10 @@
         profileStatus.innerText = 'Ready to update profile.';
       }
     } else {
-      const now = Date.now();
-      const timeSinceChange = now - lastChange;
-      const timeSinceDelete = now - lastOwnDelete;
-      if (timeSinceChange < 86400000 || timeSinceDelete < 86400000) {
-        const hoursLeft = Math.ceil((86400000 - Math.min(timeSinceChange, timeSinceDelete)) / 3600000);
-        profileStatus.innerText = `Next profile creation in ${hoursLeft} hours.`;
+      const timeSinceDelete = Date.now() - lastOwnDelete;
+      if (timeSinceDelete < 86400000) {
+        const hoursLeft = Math.ceil((86400000 - timeSinceDelete) / 3600000);
+        profileStatus.innerText = `Next creation in ${hoursLeft} hours.`;
         submitBtn.disabled = true;
       } else {
         profileStatus.innerText = 'Create your profile to share.';
@@ -479,9 +455,6 @@
           console.log("Peer disconnected:", attribute.connectId);
           otherPeers--;
           updatePeerCount();
-          if (otherPeers <= 0) {
-            resetTimers();
-          }
         });
 
         connect.onReceive((data, attribute) => {
@@ -515,11 +488,7 @@
 
     window.addEventListener('beforeunload', () => {
       if (connect) {
-        if (otherPeers <= 0) {
-          resetTimers();
-        } else {
-          resetOwnState();
-        }
+        resetTimers();
       }
     });
 
