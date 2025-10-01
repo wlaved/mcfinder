@@ -358,6 +358,7 @@
       lastOwnDelete = 0;
       ownUsername = null;
       ownProfile = null;
+      allProfiles = [];
       localStorage.removeItem('lastChange');
       localStorage.removeItem('lastDeletes');
       localStorage.removeItem('lastOwnDelete');
@@ -368,6 +369,7 @@
       submitBtn.disabled = false;
       profileForm.reset();
       profileStatus.innerText = 'Disconnected. Create a new profile to share.';
+      profilesList.innerHTML = "";
     }
 
     function deleteProfileByUser(targetUsername) {
@@ -446,6 +448,7 @@
           console.log("New peer connected:", attribute.connectId);
           otherPeers++;
           updatePeerCount();
+          connect.Send({ type: "profiles", profiles: allProfiles }, { connectId: attribute.connectId });
           if (ownProfile) {
             connect.Send({ type: "profile", profile: ownProfile }, { connectId: attribute.connectId });
           }
@@ -455,6 +458,9 @@
           console.log("Peer disconnected:", attribute.connectId);
           otherPeers--;
           updatePeerCount();
+          if (otherPeers <= 0) {
+            resetTimers();
+          }
         });
 
         connect.onReceive((data, attribute) => {
@@ -462,6 +468,9 @@
           if (data.type === "profile") {
             console.log("Received profile from peer:", data.profile);
             updateProfile(data.profile);
+          } else if (data.type === "profiles") {
+            console.log("Received full profiles list from peer");
+            data.profiles.forEach(updateProfile);
           } else if (data.type === "delete") {
             const deleterTime = lastDeletes[data.deleter];
             if (deleterTime && now - parseInt(deleterTime) < 86400000) {
@@ -479,6 +488,9 @@
           updatePeerCount();
           if (ownProfile) {
             connect.Send({ type: "profile", profile: ownProfile }, { connectId: null });
+          }
+          if (otherPeers === 0) {
+            resetTimers();
           }
         });
       } catch (err) {
