@@ -352,7 +352,7 @@
     }
 
     function resetTimers() {
-      console.log("Disconnected or network shutdown, resetting timers and profile state");
+      console.log("Network shutdown, resetting timers and profile state");
       lastChange = 0;
       lastDeletes = {};
       lastOwnDelete = 0;
@@ -368,7 +368,7 @@
       submitBtn.textContent = 'Save & Share Profile';
       submitBtn.disabled = false;
       profileForm.reset();
-      profileStatus.innerText = 'Disconnected. Create a new profile to share.';
+      profileStatus.innerText = 'Network shutdown. Create a new profile to share.';
       profilesList.innerHTML = "";
     }
 
@@ -489,9 +489,6 @@
           if (ownProfile) {
             connect.Send({ type: "profile", profile: ownProfile }, { connectId: null });
           }
-          if (otherPeers === 0) {
-            resetTimers();
-          }
         });
       } catch (err) {
         errorDiv.innerText = "Failed to connect: " + err.message;
@@ -499,9 +496,8 @@
     };
 
     window.addEventListener('beforeunload', () => {
-      if (connect) {
-        resetTimers();
-      }
+      // No timer reset on individual disconnection
+      console.log("User disconnected, preserving timers and profile state");
     });
 
     profileForm.onsubmit = (e) => {
